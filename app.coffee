@@ -4,6 +4,7 @@ fs = require('fs')
 crypto = require('crypto')
 mime = require('mime')
 async = require('async')
+fse = require('fs-extra')
 
 MIME_TO_EXTESION_MAPPING = {
   'image/png': '.png',
@@ -49,9 +50,11 @@ filterImgs = (imgFiles, cb) ->
         count = fs.statSync(k).size
 
 
+  cb(filter)
 
 
-  console.log filter
+
+
 
 
 
@@ -79,8 +82,20 @@ async.auto
 
   filter:['getImg', (cb, result) ->
     imgs = result.getImg
-    filterImgs imgs, (cb) ->
+    filterImgs imgs, (filter) ->
+      cb(null, filter)
+  ]
 
+  copFile:['filter', (cb, result) ->
+    filter = result.filter
+    console.log filter
+    for k, v of filter
+      for i in v
+        if fs.existsSync k
+          fse.copySync i, k + '/' +  i
+        else
+          fs.mkdirSync k
+          fse.copySync i, k + '/' + i
   ]
 
 
