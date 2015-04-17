@@ -40,22 +40,24 @@
   };
 
   filterImgs = function(imgFiles, cb) {
-    var count, filter, index, k, start, v, _i, _len;
+    var count, filter, index, k, v, _i, _len;
     filter = {};
-    count = 0;
     index = 1;
-    start = 0;
-    for (k = _i = 0, _len = imgFiles.length; _i < _len; k = ++_i) {
-      v = imgFiles[k];
-      if (fs.statSync(v).size < 1024 * 1024 * 10) {
-        console.log(v);
-        count += fs.statSync(v).size;
-        if (count >= 1024 * 1024 * 10) {
-          console.log(k);
-          filter[index] = imgFiles.slice(start, k);
-          index += 1;
-          count = 0;
-          start = k;
+    count = 0;
+    for (v = _i = 0, _len = imgFiles.length; _i < _len; v = ++_i) {
+      k = imgFiles[v];
+      if (!filter[index]) {
+        filter[index] = [];
+      }
+      count += fs.statSync(k).size;
+      if (count < 1024 * 1024 * 10) {
+        filter[index].push(k);
+      } else {
+        index += 1;
+        if (fs.statSync(k).size < 1024 * 1024 * 10) {
+          filter[index] = [];
+          filter[index].push(k);
+          count = fs.statSync(k).size;
         }
       }
     }

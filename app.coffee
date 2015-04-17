@@ -29,22 +29,44 @@ getImgs = (cb) ->
 
 
 filterImgs = (imgFiles, cb) ->
+#  console.log imgFiles
   filter = {}
-  count = 0
   index = 1
-  start = 0
-  for v, k  in imgFiles
-    if fs.statSync(v).size < 1024 * 1024 * 10
-      console.log v
-      count += fs.statSync(v).size
-      if count >= 1024 * 1024 * 10
-        console.log k
-        filter[index] = imgFiles[start...k]
-        index += 1
-        count = 0
-        start = k
+  count = 0
+  for k, v in imgFiles
+    if not filter[index]
+      filter[index] = []
+
+    count += fs.statSync(k).size
+    if count < 1024 * 1024 * 10
+      filter[index].push k
+
+    else
+      index += 1
+      if fs.statSync(k).size < 1024 * 1024 * 10
+        filter[index] = []
+        filter[index].push k
+        count = fs.statSync(k).size
+
+
+
 
   console.log filter
+
+
+
+
+#count = 0
+#for i in [ '23.jpg', '24.jpg' ]
+#  count += fs.statSync(i).size
+#
+#console.log "1024 * 1024 * 10 =>", 1024*1024*10
+#console.log "count =>", count
+
+
+
+
+
 
 
 async.auto
