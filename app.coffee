@@ -18,7 +18,7 @@ MIME_TO_EXTESION_MAPPING = {
 
 
 
-getImgs = (limit=100, cb) ->
+filterImg = (limit=100, cb) ->
 
   fs.readdir process.cwd(), (err, files) ->
     return cb(err) if err
@@ -31,7 +31,7 @@ getImgs = (limit=100, cb) ->
     cb(null, imgFiles)
 
 
-filterImgs = (imgFiles, limit=100, cb) ->
+sliceImg = (imgFiles, limit=100, cb) ->
   filter = {}
   index = 1
   count = 0
@@ -56,10 +56,10 @@ filterImgs = (imgFiles, limit=100, cb) ->
 
 
 
-test = (limit=100) ->
+shell = (limit=100) ->
   async.auto
     getImg:(cb) ->
-      getImgs limit, (err, res) ->
+      filterImg limit, (err, res) ->
         return console.log err if err
         cb(null, res)
 
@@ -67,7 +67,7 @@ test = (limit=100) ->
     filter:['getImg', (cb, result) ->
       console.log "limit"
       imgs = result.getImg
-      filterImgs imgs, limit, (filter) ->
+      sliceImg imgs, limit, (filter) ->
         cb(null, filter)
     ]
 
@@ -88,10 +88,10 @@ test = (limit=100) ->
 
 if argv.l
   limit = argv.l
-  test(limit)
+  shell(limit)
 
 else
-  test()
+  shell()
 
 #createRes = (imgFiles, cb) ->
 #  resources = []
