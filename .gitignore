@@ -30,3 +30,4 @@ node_modules
 *.map
 .idea/
 .DS_Store
+*.enex

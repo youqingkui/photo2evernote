@@ -6,10 +6,13 @@
     "evernote": "^1.25.4",
     "fs-extra": "^0.18.1",
     "mime": "^1.3.4",
+    "nodemailer": "^1.3.4",
     "optimist": "^0.6.1"
   },
   "description": "test up photo in evernote",
-  "bin" : { "ifslice" : "./app.js" },
+  "bin": {
+    "ifslice": "./app.js"
+  },
   "main": "app.js",
   "devDependencies": {},
   "scripts": {
