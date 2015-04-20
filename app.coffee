@@ -28,7 +28,7 @@ createENEM_RES_END = (res) ->
 
 
 
-
+### 筛选图片 ###
 filterImg = (limit=100, cb) ->
 
   fs.readdir process.cwd(), (err, files) ->
@@ -42,7 +42,7 @@ filterImg = (limit=100, cb) ->
 
     cb(null, imgFiles)
 
-
+### 按限制大小分组图片 ###
 sliceImg = (imgFiles, limit=100, cb) ->
   filter = {}
   index = 1
@@ -65,7 +65,7 @@ sliceImg = (imgFiles, limit=100, cb) ->
 
   cb(filter)
 
-
+### 邮件创建笔记 ###
 createEmailNote = (filter) ->
   for k, v of filter
     mailOption = {
@@ -85,6 +85,7 @@ createEmailNote = (filter) ->
 
       console.log info
 
+### 创建导入笔记 ###
 creatImportNote = (filter) ->
   for k, v of filter
     tmp = []
@@ -110,7 +111,7 @@ creatImportNote = (filter) ->
 
 
 
-
+### 生成笔记内容HASH ###
 createHashHex = (body) ->
   md5 = crypto.createHash('md5')
   md5.update(body)
@@ -119,7 +120,7 @@ createHashHex = (body) ->
 
 
 
-
+### 读取图片返回resource ###
 readImg = (img, cb) ->
   image = fs.readFileSync(img)
   hash = image.toString('base64')
@@ -186,35 +187,26 @@ if argv.l
 else
   shell()
 
-createRes = (imgFiles, cb) ->
-  resources = []
-  async.eachSeries imgFiles, (item, callback) ->
-    image = fs.readFileSync(item)
-    hash = image.toString('base64')
-    data = new Evernote.Data()
-    data.size = image.length
-    data.bodyHash = "hash"
-    data.body = "image"
-
-    resource = new Evernote.Resource()
-    resource.mime = mime.lookup(item)
-    resource.data = data
-
-    resources.push resource
-
-    callback()
-
-  ,(eachErr) ->
-    return cb(eachErr) if eachErr
-
-
-
-
-
-
-#createNote = (cb) ->
-#  note = new Evernote.Note()
-#  note.title = "Test Note"
+#createRes = (imgFiles, cb) ->
+#  resources = []
+#  async.eachSeries imgFiles, (item, callback) ->
+#    image = fs.readFileSync(item)
+#    hash = image.toString('base64')
+#    data = new Evernote.Data()
+#    data.size = image.length
+#    data.bodyHash = "hash"
+#    data.body = "image"
+#
+#    resource = new Evernote.Resource()
+#    resource.mime = mime.lookup(item)
+#    resource.data = data
+#
+#    resources.push resource
+#
+#    callback()
+#
+#  ,(eachErr) ->
+#    return cb(eachErr) if eachErr
 
 
 
