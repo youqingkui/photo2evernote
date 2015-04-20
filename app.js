@@ -27,14 +27,14 @@
     'image/gif': '.gif'
   };
 
-  ENEM_HEAD = '<?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd"> <en-export export-date="20150420T023922Z" application="Evernote" version="Evernote Mac 6.0.8 (451398)"> <note><title>无标题</title><content><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?> <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"> <en-note>';
+  ENEM_HEAD = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd"><en-export export-date="20150420T023922Z" application="Evernote" version="Evernote Mac 6.0.8 (451398)"><note><title>无标题</title><content><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note>';
 
   ENEM_END = "</en-note>]]></content><created>20150420T023831Z</created><updated>20150420T023912Z</updated><note-attributes><latitude>22.60284578376065</latitude><longitude>114.0366381790896</longitude><altitude>87.88452911376953</altitude><author>友情</author><source>desktop.mac</source><reminder-order>0</reminder-order></note-attributes>";
 
   ENEM_RES_HEAD = '<resource><data encoding="base64">';
 
   createENEM_RES_END = function(res) {
-    return "</data><mime>" + res.mime + "</mime><width></width><height></height><duration>0</duration><resource-attributes> <file-name>" + res.img + "</file-name> </resource-attributes>";
+    return "</data><mime>" + res.mime + "</mime><width></width><height></height><duration>0</duration><resource-attributes><file-name>" + res.img + "</file-name></resource-attributes></resource>";
   };
 
   filterImg = function(limit, cb) {
@@ -128,13 +128,14 @@
       }
       for (_j = 0, _len1 = tmp.length; _j < _len1; _j++) {
         t = tmp[_j];
-        ENEM += ENEM_HEAD + '<div><en-media style="height: auto;" type="' + t.mime + (" hash=" + (createHashHex(t.image)) + "/></div>");
+        ENEM += ENEM_HEAD + '<div><en-media style="height: auto;" type="' + t.mime + '" hash="' + createHashHex(t.image) + '"/></div>';
       }
       ENEM += ENEM_END;
       for (_k = 0, _len2 = tmp.length; _k < _len2; _k++) {
         t = tmp[_k];
         ENEM += ENEM_RES_HEAD + t.data.bodyHash + createENEM_RES_END(t);
       }
+      ENEM += "</note></en-export>";
       enex = fs.createWriteStream(k + '.enex');
       enex.write(ENEM);
     }
