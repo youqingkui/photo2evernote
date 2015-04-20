@@ -1,6 +1,6 @@
 {
   "name": "photo2evernote",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "dependencies": {
     "async": "^0.9.0",
     "evernote": "^1.25.4",
@@ -22,10 +22,14 @@
     "type": "git",
     "url": "https://github.com/youqingkui/yinxiang-photo.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "youqingkui",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/youqingkui/yinxiang-photo/issues"
   },
-  "homepage": "https://github.com/youqingkui/yinxiang-photo"
+  "homepage": "https://github.com/youqingkui/yinxiang-photo",
+  "keywords": [
+    "evernote",
+    "photos"
+  ]
 }

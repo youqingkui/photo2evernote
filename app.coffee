@@ -17,9 +17,14 @@ MIME_TO_EXTESION_MAPPING = {
   'image/gif': '.gif'
 }
 
-ENEM_HEAD = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd"><en-export export-date="20150420T023922Z" application="Evernote" version="Evernote Mac 6.0.8 (451398)"><note><title>无标题</title><content><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note>'
+pwd = process.cwd().split('/')
 
-ENEM_END = "</en-note>]]></content><created>20150420T023831Z</created><updated>20150420T023912Z</updated><note-attributes><latitude>22.60284578376065</latitude><longitude>114.0366381790896</longitude><altitude>87.88452911376953</altitude><author>友情</author><source>desktop.mac</source><reminder-order>0</reminder-order></note-attributes>"
+createENEM_HEAD = (title) ->
+  xml = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-export SYSTEM "http://xml.evernote.com/pub/evernote-export3.dtd"><en-export export-date="20150420T023922Z" application="Evernote" version="Evernote Mac 6.0.8 (451398)"><note><title>' + title
+  xml += '</title><content><![CDATA[<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note>'
+  return xml
+
+ENEM_END = "</en-note>]]></content><created>#{new Date()}</created><updated>#{new Date()}</updated><note-attributes><latitude>22.60284578376065</latitude><longitude>114.0366381790896</longitude><altitude>87.88452911376953</altitude><author>#{process.env.USER}</author><source>desktop.mac</source><reminder-order>0</reminder-order></note-attributes>"
 
 ENEM_RES_HEAD = '<resource><data encoding="base64">'
 
@@ -89,7 +94,7 @@ createEmailNote = (filter) ->
 creatImportNote = (filter) ->
   for k, v of filter
     tmp = []
-    ENEM = '' + ENEM_HEAD
+    ENEM = createENEM_HEAD(pwd[pwd.length - 1] + ' ' + k)
     for i in v
       readImg i, (res) ->
         tmp.push res
