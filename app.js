@@ -134,24 +134,35 @@
   /* 创建导入笔记 */
 
   creatImportNote = function(filter) {
-    var ENEM, enex, i, k, t, tmp, v, _i, _j, _k, _len, _len1, _len2;
+    var ENEM, enex, i, importScpt, k, scptHead, scptPwd, scptPwdArr, t, tmp, v, _i, _j, _k, _l, _len, _len1, _len2, _len3;
+    importScpt = fs.createWriteStream('import.scpt', {
+      flags: 'a'
+    });
+    scptHead = 'tell application "Evernote"';
+    scptPwdArr = pwd.slice(1);
+    scptPwd = '"Macintosh HD:';
+    for (_i = 0, _len = scptPwdArr.length; _i < _len; _i++) {
+      i = scptPwdArr[_i];
+      scptPwd += i + ":";
+    }
+    importScpt.write(scptHead);
     for (k in filter) {
       v = filter[k];
       tmp = [];
       ENEM = createENEM_HEAD(pwd[pwd.length - 1] + ' ' + k);
-      for (_i = 0, _len = v.length; _i < _len; _i++) {
-        i = v[_i];
+      for (_j = 0, _len1 = v.length; _j < _len1; _j++) {
+        i = v[_j];
         readImg(i, function(res) {
           return tmp.push(res);
         });
       }
-      for (_j = 0, _len1 = tmp.length; _j < _len1; _j++) {
-        t = tmp[_j];
+      for (_k = 0, _len2 = tmp.length; _k < _len2; _k++) {
+        t = tmp[_k];
         ENEM += '<div><en-media style="height: auto;" type="' + t.mime + '" hash="' + createHashHex(t.image) + '"/></div>';
       }
       ENEM += ENEM_END;
-      for (_k = 0, _len2 = tmp.length; _k < _len2; _k++) {
-        t = tmp[_k];
+      for (_l = 0, _len3 = tmp.length; _l < _len3; _l++) {
+        t = tmp[_l];
         ENEM += ENEM_RES_HEAD + t.data.bodyHash + createENEM_RES_END(t);
       }
       ENEM += "</note></en-export>";
@@ -207,7 +218,6 @@
       filter: [
         'getImg', function(cb, result) {
           var imgs;
-          console.log("limit");
           imgs = result.getImg;
           return sliceImg(imgs, limit, function(filter) {
             return cb(null, filter);
@@ -231,7 +241,7 @@
               }
             }
           }
-          return console.log("ok");
+          return console.log("copy imgs ok");
         }
       ],
       cImportNote: [

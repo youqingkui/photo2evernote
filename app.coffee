@@ -92,6 +92,15 @@ createEmailNote = (filter) ->
 
 ### 创建导入笔记 ###
 creatImportNote = (filter) ->
+  importScpt = fs.createWriteStream 'import.scpt', {flags: 'a'}
+  scptHead = 'tell application "Evernote"'
+  scptPwdArr = pwd[1..]
+  scptPwd = '"Macintosh HD:'
+  for i in scptPwdArr
+    scptPwd += i + ":"
+
+
+  importScpt.write scptHead
   for k, v of filter
     tmp = []
     ENEM = createENEM_HEAD(pwd[pwd.length - 1] + ' ' + k)
@@ -155,7 +164,6 @@ shell = (limit=100) ->
 
 
     filter:['getImg', (cb, result) ->
-      console.log "limit"
       imgs = result.getImg
       sliceImg imgs, limit, (filter) ->
         cb(null, filter)
@@ -172,7 +180,7 @@ shell = (limit=100) ->
             fs.mkdirSync k
             fse.copySync i, k + '/' + i
 
-      console.log "ok"
+      console.log "copy imgs ok"
     ]
 #    emailNote:['filter', (cb, result) ->
 #      filter = result.filter
