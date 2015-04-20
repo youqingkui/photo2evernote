@@ -34,7 +34,7 @@
   ENEM_RES_HEAD = '<resource><data encoding="base64">';
 
   createENEM_RES_END = function(res) {
-    return "</data><mime>" + res.mime + "</mime><width></width><height></height><duration>0</duration><resource-attributes><file-name>" + res.img + "</file-name></resource-attributes></resource>";
+    return "</data><mime>" + res.mime + "</mime><width></width><height></height><duration>0</duration><resource-attributes><file-name>" + res.name + "</file-name></resource-attributes></resource>";
   };
 
   filterImg = function(limit, cb) {
@@ -119,7 +119,7 @@
     for (k in filter) {
       v = filter[k];
       tmp = [];
-      ENEM = '';
+      ENEM = '' + ENEM_HEAD;
       for (_i = 0, _len = v.length; _i < _len; _i++) {
         i = v[_i];
         readImg(i, function(res) {
@@ -128,7 +128,7 @@
       }
       for (_j = 0, _len1 = tmp.length; _j < _len1; _j++) {
         t = tmp[_j];
-        ENEM += ENEM_HEAD + '<div><en-media style="height: auto;" type="' + t.mime + '" hash="' + createHashHex(t.image) + '"/></div>';
+        ENEM += '<div><en-media style="height: auto;" type="' + t.mime + '" hash="' + createHashHex(t.image) + '"/></div>';
       }
       ENEM += ENEM_END;
       for (_k = 0, _len2 = tmp.length; _k < _len2; _k++) {

@@ -24,7 +24,7 @@ ENEM_END = "</en-note>]]></content><created>20150420T023831Z</created><updated>2
 ENEM_RES_HEAD = '<resource><data encoding="base64">'
 
 createENEM_RES_END = (res) ->
-  return "</data><mime>#{res.mime}</mime><width></width><height></height><duration>0</duration><resource-attributes><file-name>#{res.img}</file-name></resource-attributes></resource>"
+  return "</data><mime>#{res.mime}</mime><width></width><height></height><duration>0</duration><resource-attributes><file-name>#{res.name}</file-name></resource-attributes></resource>"
 
 
 
@@ -88,13 +88,13 @@ createEmailNote = (filter) ->
 creatImportNote = (filter) ->
   for k, v of filter
     tmp = []
-    ENEM = ''
+    ENEM = '' + ENEM_HEAD
     for i in v
       readImg i, (res) ->
         tmp.push res
 
     for t in tmp
-      ENEM += ENEM_HEAD + '<div><en-media style="height: auto;" type="' + t.mime + '" hash="' + createHashHex(t.image) + '"/></div>'
+      ENEM += '<div><en-media style="height: auto;" type="' + t.mime + '" hash="' + createHashHex(t.image) + '"/></div>'
 
     ENEM += ENEM_END
 
