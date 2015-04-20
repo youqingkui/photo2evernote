@@ -135,17 +135,13 @@
 
   creatImportNote = function(filter) {
     var ENEM, enex, i, importScpt, k, scptHead, scptPwd, scptPwdArr, t, tmp, v, _i, _j, _k, _l, _len, _len1, _len2, _len3;
-    importScpt = fs.createWriteStream('import.scpt', {
-      flags: 'a'
-    });
-    scptHead = 'tell application "Evernote"';
+    scptHead = 'tell application "Evernote"\n';
     scptPwdArr = pwd.slice(1);
     scptPwd = '"Macintosh HD:';
     for (_i = 0, _len = scptPwdArr.length; _i < _len; _i++) {
       i = scptPwdArr[_i];
       scptPwd += i + ":";
     }
-    importScpt.write(scptHead);
     for (k in filter) {
       v = filter[k];
       tmp = [];
@@ -168,8 +164,13 @@
       ENEM += "</note></en-export>";
       enex = fs.createWriteStream(k + '.enex');
       enex.write(ENEM);
+      scptHead += ("\timport " + (scptPwd + k) + ".enex") + '" to "Photos"\n';
     }
-    return console.log("all do");
+    scptHead += 'end tell';
+    importScpt = fs.createWriteStream('import.scpt');
+    importScpt.write(scptHead);
+    console.log("all do");
+    return console.log(scptHead);
   };
 
 

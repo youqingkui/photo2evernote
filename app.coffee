@@ -92,15 +92,12 @@ createEmailNote = (filter) ->
 
 ### 创建导入笔记 ###
 creatImportNote = (filter) ->
-  importScpt = fs.createWriteStream 'import.scpt', {flags: 'a'}
-  scptHead = 'tell application "Evernote"'
+  scptHead = 'tell application "Evernote"\n'
   scptPwdArr = pwd[1..]
   scptPwd = '"Macintosh HD:'
   for i in scptPwdArr
     scptPwd += i + ":"
 
-
-  importScpt.write scptHead
   for k, v of filter
     tmp = []
     ENEM = createENEM_HEAD(pwd[pwd.length - 1] + ' ' + k)
@@ -118,8 +115,13 @@ creatImportNote = (filter) ->
     ENEM += "</note></en-export>"
     enex = fs.createWriteStream k + '.enex'
     enex.write ENEM
+    scptHead += "\timport #{scptPwd + k}.enex" + '" to "Photos"\n'
 
+  scptHead += 'end tell'
+  importScpt = fs.createWriteStream 'import.scpt'
+  importScpt.write scptHead
   console.log "all do"
+  console.log scptHead
 
 
 
