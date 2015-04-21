@@ -34,19 +34,23 @@ createENEM_RES_END = (res) ->
 
 
 
-### 筛选图片 ###
-filterImg = (limit=100, cb) ->
 
-  fs.readdir process.cwd(), (err, files) ->
+### 筛选图片 ###
+filterImg = (dir=process.cwd(), limit=100, cb) ->
+
+  fs.readdir dir, (err, files) ->
     return cb(err) if err
 
     imgFiles = []
     for f in files
-      type = mime.lookup(f)
-      if type of MIME_TO_EXTESION_MAPPING and fs.statSync(f).size < 1024 * 1024 * limit
-        imgFiles.push f
-      else
-        console.log "#{f} 不是图片类型或超过了限制，被过滤"
+      file = dir + '/' + f
+      type = mime.lookup(file)
+      if type of MIME_TO_EXTESION_MAPPING and fs.statSync(file).size < 1024 * 1024 * limit
+        imgFiles.push file
+      else if fs.statSync(file).isDirectory()
+#        console.log "#{file} 是文件夹"
+        tmp =  dir + '/' + f
+        filterImg(tmp, limit, cb)
 
     cb(null, imgFiles)
 
@@ -164,44 +168,46 @@ readImg = (img, cb) ->
 shell = (limit=100) ->
   async.auto
     getImg:(cb) ->
-      filterImg limit, (err, res) ->
+      filterImg process.cwd(), limit, (err, res) ->
         return console.log err if err
+        console.log res.length
         cb(null, res)
 
 
     filter:['getImg', (cb, result) ->
       imgs = result.getImg
       sliceImg imgs, limit, (filter) ->
+        console.log imgs
         cb(null, filter)
     ]
-
-    copFile:['filter', (cb, result) ->
-      filter = result.filter
-      console.log filter
-      for k, v of filter
-        for i in v
-          if fs.existsSync k
-            fse.copySync i, k + '/' +  i
-          else
-            fs.mkdirSync k
-            fse.copySync i, k + '/' + i
-
-      console.log "copy imgs ok"
-    ]
-
-    cImportNote:['filter', (cb, result) ->
-      filter = result.filter
-      creatImportNote(filter, cb)
-    ]
-
-    doScript:['cImportNote', (cb) ->
-      exec "osascript import.scpt", (err, stdout, stderr) ->
-        return console.log err if err
-
-        console.log stdout
-        console.log stderr
-        console.log "scpt"
-    ]
+#
+#    copFile:['filter', (cb, result) ->
+#      filter = result.filter
+#      console.log filter
+#      for k, v of filter
+#        for i in v
+#          if fs.existsSync k
+#            fse.copySync i, k + '/' +  i
+#          else
+#            fs.mkdirSync k
+#            fse.copySync i, k + '/' + i
+#
+#      console.log "copy imgs ok"
+#    ]
+#
+#    cImportNote:['filter', (cb, result) ->
+#      filter = result.filter
+#      creatImportNote(filter, cb)
+#    ]
+#
+#    doScript:['cImportNote', (cb) ->
+#      exec "osascript import.scpt", (err, stdout, stderr) ->
+#        return console.log err if err
+#
+#        console.log stdout
+#        console.log stderr
+#        console.log "scpt"
+#    ]
 
 
 if argv.l
