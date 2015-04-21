@@ -9,6 +9,7 @@ async = require('async')
 fse = require('fs-extra')
 email = require('./email')
 argv = require('optimist').argv
+exec = require('child_process').exec
 
 MIME_TO_EXTESION_MAPPING = {
   'image/png': '.png',
@@ -44,6 +45,8 @@ filterImg = (limit=100, cb) ->
       type = mime.lookup(f)
       if type of MIME_TO_EXTESION_MAPPING and fs.statSync(f).size < 1024 * 1024 * limit
         imgFiles.push f
+      else
+        console.log "#{f} 不是图片类型或超过了限制，被过滤"
 
     cb(null, imgFiles)
 
@@ -91,7 +94,7 @@ createEmailNote = (filter) ->
       console.log info
 
 ### 创建导入笔记 ###
-creatImportNote = (filter) ->
+creatImportNote = (filter, cb) ->
   scptHead = 'tell application "Evernote"\n'
   scptPwdArr = pwd[1..]
   scptPwd = '"Macintosh HD:'
@@ -115,13 +118,14 @@ creatImportNote = (filter) ->
     ENEM += "</note></en-export>"
     enex = fs.createWriteStream k + '.enex'
     enex.write ENEM
-    scptHead += "\timport #{scptPwd + k}.enex" + '" to "Photos"\n'
+    scptHead += "\timport #{scptPwd + k}.enex" + '" to "01-目录"\n'
 
   scptHead += 'end tell'
   importScpt = fs.createWriteStream 'import.scpt'
   importScpt.write scptHead
-  console.log "all do"
+  console.log "import enex all do"
   console.log scptHead
+  cb()
 
 
 
@@ -184,14 +188,19 @@ shell = (limit=100) ->
 
       console.log "copy imgs ok"
     ]
-#    emailNote:['filter', (cb, result) ->
-#      filter = result.filter
-#      createEmailNote filter
-#
-#    ]
+
     cImportNote:['filter', (cb, result) ->
       filter = result.filter
-      creatImportNote(filter)
+      creatImportNote(filter, cb)
+    ]
+
+    doScript:['cImportNote', (cb) ->
+      exec "osascript import.scpt", (err, stdout, stderr) ->
+        return console.log err if err
+
+        console.log stdout
+        console.log stderr
+        console.log "scpt"
     ]
 
 
