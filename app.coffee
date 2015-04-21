@@ -34,25 +34,25 @@ createENEM_RES_END = (res) ->
 
 
 
-
+gimgFiles = []
 ### 筛选图片 ###
-filterImg = (dir=process.cwd(), limit=100, cb) ->
+filterImg = (dir=process.cwd(), limit=100) ->
+  files = fs.readdirSync dir
 
-  fs.readdir dir, (err, files) ->
-    return cb(err) if err
+  for f in files
+    file = dir + '/' + f
+    type = mime.lookup(file)
+    if type of MIME_TO_EXTESION_MAPPING and fs.statSync(file).size < 1024 * 1024 * limit
+      gimgFiles.push file
+    else if fs.statSync(file).isDirectory()
+      tmp =  dir + '/' + f
+      console.log tmp
+      filterImg(tmp, limit)
 
-    imgFiles = []
-    for f in files
-      file = dir + '/' + f
-      type = mime.lookup(file)
-      if type of MIME_TO_EXTESION_MAPPING and fs.statSync(file).size < 1024 * 1024 * limit
-        imgFiles.push file
-      else if fs.statSync(file).isDirectory()
-#        console.log "#{file} 是文件夹"
-        tmp =  dir + '/' + f
-        filterImg(tmp, limit, cb)
 
-    cb(null, imgFiles)
+
+
+
 
 ### 按限制大小分组图片 ###
 sliceImg = (imgFiles, limit=100, cb) ->
@@ -168,16 +168,14 @@ readImg = (img, cb) ->
 shell = (limit=100) ->
   async.auto
     getImg:(cb) ->
-      filterImg process.cwd(), limit, (err, res) ->
-        return console.log err if err
-        console.log res.length
-        cb(null, res)
+      filterImg process.cwd(), limit
+      cb(null, gimgFiles)
 
 
     filter:['getImg', (cb, result) ->
       imgs = result.getImg
       sliceImg imgs, limit, (filter) ->
-        console.log imgs
+        console.log filter
         cb(null, filter)
     ]
 #
@@ -195,10 +193,10 @@ shell = (limit=100) ->
 #      console.log "copy imgs ok"
 #    ]
 #
-#    cImportNote:['filter', (cb, result) ->
-#      filter = result.filter
-#      creatImportNote(filter, cb)
-#    ]
+    cImportNote:['filter', (cb, result) ->
+      filter = result.filter
+      creatImportNote(filter, cb)
+    ]
 #
 #    doScript:['cImportNote', (cb) ->
 #      exec "osascript import.scpt", (err, stdout, stderr) ->
