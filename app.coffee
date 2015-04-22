@@ -36,7 +36,7 @@ createENEM_RES_END = (res) ->
 
 gimgFiles = []
 ### 筛选图片 ###
-filterImg = (dir=process.cwd(), limit=100) ->
+filterImg = (dir=process.cwd(), limit=100, forDir=false) ->
   files = fs.readdirSync dir
 
   for f in files
@@ -44,10 +44,10 @@ filterImg = (dir=process.cwd(), limit=100) ->
     type = mime.lookup(file)
     if type of MIME_TO_EXTESION_MAPPING and fs.statSync(file).size < 1024 * 1024 * limit
       gimgFiles.push file
-    else if fs.statSync(file).isDirectory()
+    else if fs.statSync(file).isDirectory() and forDir
       tmp =  dir + '/' + f
       console.log tmp
-      filterImg(tmp, limit)
+      filterImg(tmp, limit, forDir)
 
 
 
@@ -165,10 +165,10 @@ readImg = (img, cb) ->
 
 
 
-shell = (limit=100) ->
+shell = (limit=100, f) ->
   async.auto
     getImg:(cb) ->
-      filterImg process.cwd(), limit
+      filterImg process.cwd(), limit, f
       cb(null, gimgFiles)
 
 
@@ -208,33 +208,12 @@ shell = (limit=100) ->
 #    ]
 
 
+console.log argv
+f = argv.f
+l = 100
 if argv.l
-  limit = argv.l
-  shell(limit)
-
-else
-  shell()
-
-#createRes = (imgFiles, cb) ->
-#  resources = []
-#  async.eachSeries imgFiles, (item, callback) ->
-#    image = fs.readFileSync(item)
-#    hash = image.toString('base64')
-#    data = new Evernote.Data()
-#    data.size = image.length
-#    data.bodyHash = "hash"
-#    data.body = "image"
-#
-#    resource = new Evernote.Resource()
-#    resource.mime = mime.lookup(item)
-#    resource.data = data
-#
-#    resources.push resource
-#
-#    callback()
-#
-#  ,(eachErr) ->
-#    return cb(eachErr) if eachErr
+  l = argv.l
+shell(l, f)
 
 
 
