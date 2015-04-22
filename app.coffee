@@ -51,9 +51,6 @@ filterImg = (dir=process.cwd(), limit=100, forDir=false) ->
 
 
 
-
-
-
 ### 按限制大小分组图片 ###
 sliceImg = (imgFiles, limit=100, cb) ->
   filter = {}
@@ -98,7 +95,7 @@ createEmailNote = (filter) ->
       console.log info
 
 ### 创建导入笔记 ###
-creatImportNote = (filter, cb) ->
+creatImportNote = (filter, noteTitle, cb) ->
   scptHead = 'tell application "Evernote"\n'
   scptPwdArr = pwd[1..]
   scptPwd = '"Macintosh HD:'
@@ -107,7 +104,10 @@ creatImportNote = (filter, cb) ->
 
   for k, v of filter
     tmp = []
-    ENEM = createENEM_HEAD(pwd[pwd.length - 1] + ' ' + k)
+    if noteTitle
+      ENEM = createENEM_HEAD(noteTitle)
+    else
+      ENEM = createENEM_HEAD(pwd[pwd.length - 1] + ' ' + k)
     for i in v
       readImg i, (res) ->
         tmp.push res
@@ -165,7 +165,8 @@ readImg = (img, cb) ->
 
 
 
-shell = (limit=100, f) ->
+shell = (limit=100, f, noteTitle) ->
+  console.log "limit", limit
   async.auto
     getImg:(cb) ->
       filterImg process.cwd(), limit, f
@@ -195,7 +196,7 @@ shell = (limit=100, f) ->
 #
     cImportNote:['filter', (cb, result) ->
       filter = result.filter
-      creatImportNote(filter, cb)
+      creatImportNote(filter, noteTitle,  cb)
     ]
 #
 #    doScript:['cImportNote', (cb) ->
@@ -211,9 +212,10 @@ shell = (limit=100, f) ->
 console.log argv
 f = argv.f
 l = 100
+t = argv.t
 if argv.l
   l = argv.l
-shell(l, f)
+shell(l, f, t)
 
 
 
