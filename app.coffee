@@ -105,7 +105,7 @@ creatImportNote = (filter, noteTitle, cb) ->
   for k, v of filter
     tmp = []
     if noteTitle
-      ENEM = createENEM_HEAD(noteTitle)
+      ENEM = createENEM_HEAD(noteTitle + ' ' + k)
     else
       ENEM = createENEM_HEAD(pwd[pwd.length - 1] + ' ' + k)
     for i in v
