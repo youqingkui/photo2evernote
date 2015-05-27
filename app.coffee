@@ -165,7 +165,7 @@ readImg = (img, cb) ->
 
 
 
-shell = (limit=100, f, noteTitle) ->
+shell = (limit=200, f, noteTitle) ->
   console.log "limit", limit
   async.auto
     getImg:(cb) ->
@@ -209,13 +209,30 @@ shell = (limit=100, f, noteTitle) ->
 #    ]
 
 
+isNumber = (num) ->
+  res = Number(num)
+  if isNaN(res)
+    return false
+
+  return true
+
 console.log argv
 f = argv.f
-l = 100
+l = 200
 t = argv.t
+
 if argv.l
-  l = argv.l
-shell(l, f, t)
+  if isNumber(argv.l) and 0 < argv.l <= 200
+    l = argv.l
+    shell(l, f, t)
+  else
+    console.log "l 为笔记大小限制，默认为高级账户最大值:200M。请输入正确的l参数，如：-l 200"
+
+else
+  shell(l, f, t)
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 {
   "name": "photo2evernote",
-  "version": "0.0.8",
+  "version": "0.1.1",
   "dependencies": {
     "async": "^0.9.0",
     "evernote": "^1.25.4",
